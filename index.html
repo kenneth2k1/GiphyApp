@@ -30,8 +30,8 @@
                                 <div class='col-lg-12'>
                                     <div class="panel panel-default">
                                         <div class="panel-heading">Some Gifs</div>
-                                        <div id="empListDiv" class="panel-body">
-                                                <table class="table">
+                                        <div id="gifDiv" class="panel-body">
+                                                <!-- <table class="table">
                                                         <thead>
                                                           <tr>
                                                             <th scope="col">Employee Name</th>
@@ -45,7 +45,7 @@
                                                         <tbody>
 
                                                         </tbody>
-                                                </table>    
+                                                </table>     -->
                                         </div>
                                       </div>
                                     </div>
@@ -88,99 +88,44 @@
         </div>
       </div>
 
-      <script>
+      <script type="text/javascript">
 
-        ////// VARIABLES ///////
-        var employeeName;
-        var roleField;
-        var startDate;
-        var monthsWorked = 0;
-        var monthlyRate;
-        var totalBilled;
-        
-      ////////// FIREBASE CONNECTION ///////
+
+
+        var quer = "me eiht";
+        var year = "2019";
+        var month = "01";
+        var day = "19";
+        // https://api.giphy.com/v1/gifs/search?api_key=&q=&limit=25&offset=0&rating=G&lang=en
+        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=tMaY7115vsVOvTCaJgwPY1VGcnx54oI1&limit=5" + "&q=" + quer;
       
-      var config = {
-        apiKey: "AIzaSyBR3aNCFkzSUgty7CjwvPqe9HtaeXA-aII",
-        authDomain: "db-project-8c454.firebaseapp.com",
-        databaseURL: "https://db-project-8c454.firebaseio.com",
-        projectId: "db-project-8c454",
-        storageBucket: "db-project-8c454.appspot.com",
-        messagingSenderId: "636577976324"
-        };
-
-        firebase.initializeApp(config);
-        var database = firebase.database();
-
-            var employeeObj = {
-                employeeName : "name",
-                roleField : "role",
-                startDate : "startDate",
-                monthlyRate : "monthlyRate",
-                dateAdded : "joinDate"
-            }
-
-            database.ref().set(employeeObj);
-
-    // FUNCTIONS + EVENTS
-    // --------------------------------------------------------------------------------
-
-    $("#btnSubmit").on("click", function() {
-        database.ref().push({
-
-        employeeName : $("#employeeName").val(),
-                roleField : $("#roleField").val(),
-                startDate : $("#startDate").val(),
-                monthlyRate : $("#monthlyRate").val()
-                // joinDadte : 
-
+      
+      
+      $(document).ready(function(){
+          getGifs();
+      
+      //   $(".btn-primary").click( function() {
+      //     plyrName = $("#statName").val();
+      //     getHolidays(plyerName);
+      //   });
+      
       });
-      alert("Employee added to the database");
-    });
-
-    // MAIN PROCESS + INITIAL CODE
-    // --------------------------------------------------------------------------------
-
-    database.ref().on("child", function(updatedVal) {
-      console.log(updatedVal.val());
-      console.log(updatedVal.val().employeeName);
-      console.log(updatedVal.val().roleField);
-      console.log(updatedVal.val().monthlyRate);
-      console.log(updatedVal.val().monthsWorked);
-      console.log(updatedVal.val().totalBilled);
-
-      $('.table > tbody:last-child').append("<tr><td>" + updatedVal.val().employeeName + "</td>" +
-                                            "<td>" + updatedVal.val().roleField + "</td>" +
-                                            "<td>" + updatedVal.val().startDate + "</td>" +
-                                            "<td>" + updatedVal.val().monthsWorked + "</td>" +
-                                            "<td>" + updatedVal.val().monthlyRate + "</td>" +
-                                            "<td>" + updatedVal.val().totalBilled + "</td>" 
-                                            + "</tr>" 
-                                                         )
-
-    }, function(errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
-
-    // database.ref().on("child_added", function(childSnapshot) {
       
-    //   console.log(childSnapshot.val());
+      function getGifs(){
+          $.ajax({
+              url: queryURL,
+              method: "GET"
+            })
+              .then(function(response) {
+                // Storing an array of results in the results variable
+                var results = response.data;
+                $("#gifDiv").text(JSON.stringify(response));
+                
+          console.log(response);
       
-    //   $('.table > tbody:last-child').append("<tr><td>" + childSnapshot.val().employeeName + "</td><td>" +
-    //                                                      childSnapshot.val().roleField + "</td></tr>"
-    //                                                      )
-
-    // //   console.log(childSnapshot.val().employeeName);
-    // //   console.log(childSnapshot.val().roleField);
-    // //   console.log(childSnapshot.val().monthlyRate);
-    // //   console.log(childSnapshot.val().monthsWorked);
-    // //   console.log(childSnapshot.val().totalBilled);
-    // //   $('.table > tbody:last-child').append("<tr><td>" + employeeName + "</td></tr>");
-
-    // }, function(errorObject) {
-    //   console.log("The read failed: " + errorObject.code);
-    // });
-      </script>
+              });
+          }
+        </script>
    </body>
 </html>
 
