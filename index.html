@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+<title>Giphy App</title>
+</head>
+<body>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="jumbotron">
+              <h1 class="text-center">Giphy App</h1>
+            </div>
+            <div class="container">
+                <div class="row">
+                  <div class='col-lg-12'>
+
+                        <div class="row">
+                                <div class='col-lg-12'>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">Some Gifs</div>
+                                        <div id="empListDiv" class="panel-body">
+                                                <table class="table">
+                                                        <thead>
+                                                          <tr>
+                                                            <th scope="col">Employee Name</th>
+                                                            <th scope="col">Role</th>
+                                                            <th scope="col">Start Date</th>
+                                                            <th scope="col">Months Worked</th>
+                                                            <th scope="col">Monthly Rate ($)</th>
+                                                            <th scope="col">Total Billed ($)</th>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        </tbody>
+                                                </table>    
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div> 
+
+                      <div class="panel panel-default">
+                          <div class="panel-heading">Add Employee</div>
+                          <div class="panel-body">
+                          <form>
+                            <div class="form-group">
+                              <label for="employeeName">Employee Name</label>
+                              <input type="text" class="form-control" id="employeeName" aria-describedby="searchTerm" placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="roleField">Role</label>
+                                <input type="text" class="form-control" id="roleField" aria-describedby="numRecs" placeholder="CEO">
+                              </div>
+                              <div class="form-group">
+                                  <label for="startDate">Start Date</label>
+                                  <input type="text" class="form-control" id="startDate" aria-describedby="startYear" placeholder="01/01/2019">
+                                </div>
+                                <div class="form-group">
+                                    <label for="monthlyRate">Monthly Rate</label>
+                                    <input type="text" class="form-control" id="monthlyRate" aria-describedby="endYear" placeholder="MonthlyRate">
+                                  </div>
+                          </form>
+                          <div class="row">
+                            <div class="col-lg-6">
+                                <button id="btnSubmit" type="button" class="btn btn-primary">Submit</button>
+                                <button id="clearBtn" type="button" class="btn btn-primary">Clear Results</button>
+                            </div>
+                          </div>
+                        </div>
+                  </panel>
+                  </div>
+
+                      </div>
+                </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+
+        ////// VARIABLES ///////
+        var employeeName;
+        var roleField;
+        var startDate;
+        var monthsWorked = 0;
+        var monthlyRate;
+        var totalBilled;
+        
+      ////////// FIREBASE CONNECTION ///////
+      
+      var config = {
+        apiKey: "AIzaSyBR3aNCFkzSUgty7CjwvPqe9HtaeXA-aII",
+        authDomain: "db-project-8c454.firebaseapp.com",
+        databaseURL: "https://db-project-8c454.firebaseio.com",
+        projectId: "db-project-8c454",
+        storageBucket: "db-project-8c454.appspot.com",
+        messagingSenderId: "636577976324"
+        };
+
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+            var employeeObj = {
+                employeeName : "name",
+                roleField : "role",
+                startDate : "startDate",
+                monthlyRate : "monthlyRate",
+                dateAdded : "joinDate"
+            }
+
+            database.ref().set(employeeObj);
+
+    // FUNCTIONS + EVENTS
+    // --------------------------------------------------------------------------------
+
+    $("#btnSubmit").on("click", function() {
+        database.ref().push({
+
+        employeeName : $("#employeeName").val(),
+                roleField : $("#roleField").val(),
+                startDate : $("#startDate").val(),
+                monthlyRate : $("#monthlyRate").val()
+                // joinDadte : 
+
+      });
+      alert("Employee added to the database");
+    });
+
+    // MAIN PROCESS + INITIAL CODE
+    // --------------------------------------------------------------------------------
+
+    database.ref().on("child", function(updatedVal) {
+      console.log(updatedVal.val());
+      console.log(updatedVal.val().employeeName);
+      console.log(updatedVal.val().roleField);
+      console.log(updatedVal.val().monthlyRate);
+      console.log(updatedVal.val().monthsWorked);
+      console.log(updatedVal.val().totalBilled);
+
+      $('.table > tbody:last-child').append("<tr><td>" + updatedVal.val().employeeName + "</td>" +
+                                            "<td>" + updatedVal.val().roleField + "</td>" +
+                                            "<td>" + updatedVal.val().startDate + "</td>" +
+                                            "<td>" + updatedVal.val().monthsWorked + "</td>" +
+                                            "<td>" + updatedVal.val().monthlyRate + "</td>" +
+                                            "<td>" + updatedVal.val().totalBilled + "</td>" 
+                                            + "</tr>" 
+                                                         )
+
+    }, function(errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+
+    // database.ref().on("child_added", function(childSnapshot) {
+      
+    //   console.log(childSnapshot.val());
+      
+    //   $('.table > tbody:last-child').append("<tr><td>" + childSnapshot.val().employeeName + "</td><td>" +
+    //                                                      childSnapshot.val().roleField + "</td></tr>"
+    //                                                      )
+
+    // //   console.log(childSnapshot.val().employeeName);
+    // //   console.log(childSnapshot.val().roleField);
+    // //   console.log(childSnapshot.val().monthlyRate);
+    // //   console.log(childSnapshot.val().monthsWorked);
+    // //   console.log(childSnapshot.val().totalBilled);
+    // //   $('.table > tbody:last-child').append("<tr><td>" + employeeName + "</td></tr>");
+
+    // }, function(errorObject) {
+    //   console.log("The read failed: " + errorObject.code);
+    // });
+      </script>
+   </body>
+</html>
+
+
