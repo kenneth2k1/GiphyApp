@@ -23,108 +23,90 @@
               <h1 class="text-center">Giphy App</h1>
             </div>
             <div class="container">
-                <div class="row">
-                  <div class='col-lg-12'>
+              <div class="row">
+                <div class='col-lg-12'>
 
-                        <div class="row">
-                                <div class='col-lg-12'>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">Some Gifs</div>
-                                        <div id="gifDiv" class="panel-body">
-                                                <!-- <table class="table">
-                                                        <thead>
-                                                          <tr>
-                                                            <th scope="col">Employee Name</th>
-                                                            <th scope="col">Role</th>
-                                                            <th scope="col">Start Date</th>
-                                                            <th scope="col">Months Worked</th>
-                                                            <th scope="col">Monthly Rate ($)</th>
-                                                            <th scope="col">Total Billed ($)</th>
-                                                          </tr>
-                                                        </thead>
-                                                        <tbody>
-
-                                                        </tbody>
-                                                </table>     -->
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div> 
-
-                      <div class="panel panel-default">
-                          <div class="panel-heading">Add Employee</div>
-                          <div class="panel-body">
-                          <form>
-                            <div class="form-group">
-                              <label for="employeeName">Employee Name</label>
-                              <input type="text" class="form-control" id="employeeName" aria-describedby="searchTerm" placeholder="John Doe">
-                            </div>
-                            <div class="form-group">
-                                <label for="roleField">Role</label>
-                                <input type="text" class="form-control" id="roleField" aria-describedby="numRecs" placeholder="CEO">
-                              </div>
-                              <div class="form-group">
-                                  <label for="startDate">Start Date</label>
-                                  <input type="text" class="form-control" id="startDate" aria-describedby="startYear" placeholder="01/01/2019">
-                                </div>
-                                <div class="form-group">
-                                    <label for="monthlyRate">Monthly Rate</label>
-                                    <input type="text" class="form-control" id="monthlyRate" aria-describedby="endYear" placeholder="MonthlyRate">
-                                  </div>
-                          </form>
-                          <div class="row">
-                            <div class="col-lg-6">
-                                <button id="btnSubmit" type="button" class="btn btn-primary">Submit</button>
-                                <button id="clearBtn" type="button" class="btn btn-primary">Clear Results</button>
-                            </div>
+                  <div class="row">
+                    <div class='col-lg-12'>
+                        <div class="panel panel-default">
+                          <div id="panel" class="panel-heading">Topics</div>
+                          <div id="btnDiv" class="panel-body">
                           </div>
                         </div>
-                  </panel>
+                    </div>
+                  </div> 
+
+                  <div class="panel panel-default">
+                      <div class="panel-heading">Some Gifs</div>
+                      <div id="gifDiv" class="panel-body">
+                      </div>
                   </div>
 
-                      </div>
-                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <script type="text/javascript">
 
+        topics = ["gangster rap", "sailing", "cadillac", "tennis"];
 
-
-        var quer = "me eiht";
+        var quer;
         var year = "2019";
         var month = "01";
         var day = "19";
         // https://api.giphy.com/v1/gifs/search?api_key=&q=&limit=25&offset=0&rating=G&lang=en
-        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=tMaY7115vsVOvTCaJgwPY1VGcnx54oI1&limit=5" + "&q=" + quer;
-      
-      
+        // var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=tMaY7115vsVOvTCaJgwPY1VGcnx54oI1&limit=10" + "&q=" + quer;
+
       
       $(document).ready(function(){
-          getGifs();
+
+        for (i=0; i<topics.length; i++){
+          $("#btnDiv").append("<button type='submit' class='btn btn-primary'>" + topics[i] + "</button>&nbsp");
+        }
       
-      //   $(".btn-primary").click( function() {
-      //     plyrName = $("#statName").val();
-      //     getHolidays(plyerName);
-      //   });
-      
+        $('.btn').on('click', function(){
+          var keywd = $(this).text();
+          getGifs(keywd);
+        });
+
       });
       
-      function getGifs(){
+      function getGifs(keywd){
+        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=tMaY7115vsVOvTCaJgwPY1VGcnx54oI1&limit=10" + "&q=" + keywd;
+
           $.ajax({
               url: queryURL,
               method: "GET"
             })
               .then(function(response) {
                 // Storing an array of results in the results variable
-                var results = response.data;
-                $("#gifDiv").text(JSON.stringify(response));
+                //$("#gifDiv").text(JSON.stringify(response));
+                for(i=0; i<response.data.length; i++){
+                  var imgUrl = response.data[i].images.original.url; 
+                var stillUrl = response.data[i].images.original_still.url; 
+                $("#gifDiv").append("<img src='" + imgUrl + "' data-still='" + stillUrl + "' data-animate='" + imgUrl  + "' data-state='animate' class='gif'>");
                 
+                }
+
           console.log(response);
       
               });
           }
+
+
+          $(".gif").on("click", function() {
+            var state = $(this).attr("data-state");
+            if (state === "still") {
+              $(this).attr("src", $(this).attr("data-animate"));
+              $(this).attr("data-state", "animate");
+            } else {
+              $(this).attr("src", $(this).attr("data-still"));
+              $(this).attr("data-state", "still");
+            }
+          });
+
         </script>
    </body>
 </html>
